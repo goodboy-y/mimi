@@ -42,7 +42,7 @@ func (ipt *Intercept) RunServer() {
 		panic(err)
 	}
 	server := &http.Server{
-		Addr:      "0.0.0.0:8111",
+		Addr:      "0.0.0.0:" + ipt.Ip,
 		TLSConfig: &tls.Config{Certificates: []tls.Certificate{cert}},
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if r.Method == http.MethodConnect {
