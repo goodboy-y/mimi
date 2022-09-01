@@ -46,7 +46,7 @@ func (ipt *Intercept) RunServer() {
 		TLSConfig: &tls.Config{Certificates: []tls.Certificate{cert}},
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if r.Method == http.MethodConnect {
-				Debug("HTTPS 请求, 不支持数据包处理，只能进行代理转发!! | ", r.URL.String())
+				//Debug("HTTPS 请求, 不支持数据包处理，只能进行代理转发!! | ", r.URL.String())
 				destConn, err := net.DialTimeout("tcp", r.Host, 60*time.Second)
 				if err != nil {
 					http.Error(w, err.Error(), http.StatusServiceUnavailable)
@@ -66,7 +66,7 @@ func (ipt *Intercept) RunServer() {
 				go io.Copy(clientConn, destConn)
 				go io.Copy(destConn, clientConn)
 			} else {
-				Debug("HTTP 请求,url = ", r.URL.String())
+				//Debug("HTTP 请求,url = ", r.URL.String())
 				res, err := http.DefaultTransport.RoundTrip(r)
 				if err != nil {
 					http.Error(w, err.Error(), http.StatusServiceUnavailable)
