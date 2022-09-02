@@ -22,7 +22,8 @@ var rootCmd = &cobra.Command{
 		port, _ := cmd.Flags().GetString("port")
 		key, _ := cmd.Flags().GetString("key")
 		ipt := &gt.Intercept{
-			Ip: "0.0.0.0:" + port,
+			KeyWord: key,
+			Ip:      "0.0.0.0:" + port,
 			HttpPackageFunc: func(pack *gt.HttpPackage) {
 				if strings.Index(pack.ContentType, "json") != -1 && strings.Contains(pack.Json(), key) {
 					log.Printf("json: url = %s\r\n ", pack.Url.String())

@@ -29,20 +29,21 @@ import (
 type Intercept struct {
 	Ip              string
 	HttpPackageFunc func(pack *HttpPackage)
+	KeyWord         string
 }
 
 // RunServer 启动 http/s 代理与抓包服务
 func (ipt *Intercept) RunServer() {
-	log.Println("启动代理&抓包 <Mimi代理&抓包> ......... ")
-	Debug(" - HTTPS代理 : 只支持代理转发  -> ", ipt.Ip)
-	Debug(" - HTTP代理: 支持数据包处理与代理转发  -> ", ipt.Ip)
+	log.Printf("启动关键词分析代理 <Mimi> ......... 关键词 : %s", ipt.KeyWord)
+	Debug(" - HTTPS : 只支持代理转发  -> ", ipt.Ip)
+	Debug(" - HTTP: 支持关键词分析与代理转发  -> ", ipt.Ip)
 
 	cert, err := genCertificate()
 	if err != nil {
 		panic(err)
 	}
 	server := &http.Server{
-		Addr:      "0.0.0.0:" + ipt.Ip,
+		Addr:      ipt.Ip,
 		TLSConfig: &tls.Config{Certificates: []tls.Certificate{cert}},
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if r.Method == http.MethodConnect {
