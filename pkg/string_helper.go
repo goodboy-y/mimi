@@ -20,6 +20,7 @@ import (
 	"io/ioutil"
 	"log"
 	"math"
+	log2 "mimi/internal/pkg/log"
 	"os"
 	"path"
 	"reflect"
@@ -741,7 +742,7 @@ func PanicToError(fn func()) (err error) {
 func P2E() {
 	defer func() {
 		if r := recover(); r != nil {
-			Error("Panic error: %v", r)
+			log2.Error("Panic error: %v", r)
 		}
 	}()
 }
@@ -1100,13 +1101,13 @@ func GetNowPath() string {
 func FileMd5sum(fileName string) string {
 	fin, err := os.OpenFile(fileName, os.O_RDONLY, 0644)
 	if err != nil {
-		Info(fileName, err)
+		log2.Info(fileName, err)
 		return ""
 	}
 	defer fin.Close()
 	Buf, buferr := ioutil.ReadFile(fileName)
 	if buferr != nil {
-		Info(fileName, buferr)
+		log2.Info(fileName, buferr)
 		return ""
 	}
 	m := md5.Sum(Buf)

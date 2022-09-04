@@ -3,12 +3,10 @@ package cmd
 
 import (
 	"fmt"
-	"log"
-	gt "mimi/pkg"
-	"os"
-	"strings"
-
 	"github.com/spf13/cobra"
+	"mimi/internal/pkg/core"
+	"mimi/internal/pkg/log"
+	"os"
 )
 
 var version = "1.0.0"
@@ -16,26 +14,16 @@ var version = "1.0.0"
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "mimi",
-	Short: "代理",
-	Long:  `代理服务器.`,
+	Short: "分析关键词的代理服务",
+	Long:  `分析关键词的代理服务`,
 	Run: func(cmd *cobra.Command, args []string) {
 		port, _ := cmd.Flags().GetString("port")
 		key, _ := cmd.Flags().GetString("key")
-		ipt := &gt.Intercept{
-			KeyWord: key,
-			Ip:      "0.0.0.0:" + port,
-			HttpPackageFunc: func(pack *gt.HttpPackage) {
-				if strings.Index(pack.ContentType, "json") != -1 && strings.Contains(pack.Json(), key) {
-					log.Printf("json: url = %s\r\n ", pack.Url.String())
-				}
-				if strings.Index(pack.ContentType, "html") != -1 && strings.Contains(pack.Html(), key) {
-					log.Printf("html: url = %s\r\n ", pack.Url.String())
-				}
-			},
-		}
+		logLevel, _ := cmd.Flags().GetString("log")
+		log.LogLevel(logLevel)
+		ipt := core.NewIntercept(port, key)
 		// 启动服务
 		ipt.RunServer()
-
 	},
 }
 
@@ -50,11 +38,11 @@ func Execute() {
 
 func init() {
 	rootCmd.Version = version
-	rootCmd.Flags().BoolP("version", "v", false, "")
-	rootCmd.Flags().StringP("port", "p", "8111", "")
-	rootCmd.Flags().StringP("key", "k", "idCard", "")
+	rootCmd.Flags().BoolP("version", "v", false, "版本")
+	rootCmd.Flags().StringP("port", "p", "8111", "端口")
+	rootCmd.Flags().StringP("key", "k", "idCard", "关键词，支持正则")
+	rootCmd.Flags().String("log", "info", "日志等级:debug,info,warn,error")
 	rootCmd.AddCommand(versionCmd)
-
 }
 
 var versionCmd = &cobra.Command{

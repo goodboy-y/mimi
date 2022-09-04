@@ -16,8 +16,8 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"math/big"
+	"mimi/internal/pkg/log"
 	"net"
 	"net/http"
 	"net/url"
@@ -34,9 +34,9 @@ type Intercept struct {
 
 // RunServer 启动 http/s 代理与抓包服务
 func (ipt *Intercept) RunServer() {
-	log.Printf("启动关键词分析代理 <Mimi> ......... 关键词 : %s", ipt.KeyWord)
-	Debug(" - HTTPS : 只支持代理转发  -> ", ipt.Ip)
-	Debug(" - HTTP: 支持关键词分析与代理转发  -> ", ipt.Ip)
+	fmt.Printf("启动关键词分析代理 <Mimi> ......... 关键词 : %s\n", ipt.KeyWord)
+	fmt.Println("HTTPS : 只支持代理转发  -> ", ipt.Ip)
+	fmt.Println("HTTP: 支持关键词分析与代理转发  -> ", ipt.Ip)
 
 	cert, err := genCertificate()
 	if err != nil {
@@ -47,7 +47,7 @@ func (ipt *Intercept) RunServer() {
 		TLSConfig: &tls.Config{Certificates: []tls.Certificate{cert}},
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if r.Method == http.MethodConnect {
-				//Debug("HTTPS 请求, 不支持数据包处理，只能进行代理转发!! | ", r.URL.String())
+				log.Debug("HTTPS 请求, 不支持数据包处理，只能进行代理转发!! | ", r.URL.String())
 				destConn, err := net.DialTimeout("tcp", r.Host, 60*time.Second)
 				if err != nil {
 					http.Error(w, err.Error(), http.StatusServiceUnavailable)
@@ -67,7 +67,7 @@ func (ipt *Intercept) RunServer() {
 				go io.Copy(clientConn, destConn)
 				go io.Copy(destConn, clientConn)
 			} else {
-				//Debug("HTTP 请求,url = ", r.URL.String())
+				log.Debug("HTTP 请求,url = ", r.URL.String())
 				res, err := http.DefaultTransport.RoundTrip(r)
 				if err != nil {
 					http.Error(w, err.Error(), http.StatusServiceUnavailable)
@@ -110,13 +110,13 @@ func (ipt *Intercept) RunServer() {
 
 // RunHttpIntercept 启动 http/s 代理与抓包服务
 func (ipt *Intercept) RunHttpIntercept() {
-	log.Println("启动抓包 <Mimi抓包> ......... ")
-	log.Println("目前只支持HTTP, HTTPS还在开发中 ......... ")
-	log.Println("请在系统设置代理 HTTP代理  ", ipt.Ip)
+	fmt.Printf("启动关键词分析代理 <Mimi> ......... 关键词 : %s\n", ipt.KeyWord)
+	fmt.Println("HTTPS : 只支持代理转发  -> ", ipt.Ip)
+	fmt.Println("HTTP: 支持关键词分析与代理转发  -> ", ipt.Ip)
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		log.Println("\n\n___________________________________________________________________________")
-		log.Println("代理请求信息： ", r.RemoteAddr, r.Method, r.URL.String())
+		log.Debug("\n\n___________________________________________________________________________")
+		log.Debug("代理请求信息： ", r.RemoteAddr, r.Method, r.URL.String())
 		transport := http.DefaultTransport
 		outReq := new(http.Request)
 		*outReq = *r

@@ -1,11 +1,8 @@
 /*
-	Description : 内部日志打印
-	Author : ManGe
-			2912882908@qq.com
-			https://github.com/mangenotwork/gathertool
+	内部日志打印
 */
 
-package pkg
+package log
 
 import (
 	"bytes"
@@ -26,6 +23,7 @@ func CloseLog() {
 }
 
 type logger struct {
+	Level
 	outFile       bool
 	outFileWriter *os.File
 }
@@ -45,15 +43,15 @@ func SetLogFile(name string) {
 type Level int
 
 var LevelMap = map[Level]string{
-	1: "Info  ",
-	2: "Debug ",
+	1: "Debug ",
+	2: "Info  ",
 	3: "Warn  ",
 	4: "Error ",
 }
 
 // Log 日志
 func (l *logger) Log(level Level, args string, times int) {
-	if LogClose {
+	if LogClose || level < l.Level {
 		return
 	}
 	var buffer bytes.Buffer
@@ -74,34 +72,14 @@ func (l *logger) Log(level Level, args string, times int) {
 	}
 }
 
-// Info 日志-信息
-func Info(args ...interface{}) {
-	std.Log(1, fmt.Sprint(args...), 2)
-}
-
-// Infof 日志-信息
-func Infof(format string, args ...interface{}) {
-	std.Log(1, fmt.Sprintf(format, args...), 2)
-}
-
-// InfoTimes 日志-信息, 指定日志代码位置的定位调用层级
-func InfoTimes(times int, args ...interface{}) {
-	std.Log(1, fmt.Sprint(args...), times)
-}
-
-// InfofTimes 日志-信息, 指定日志代码位置的定位调用层级
-func InfofTimes(format string, times int, args ...interface{}) {
-	std.Log(1, fmt.Sprintf(format, args...), times)
-}
-
 // Debug 日志-调试
 func Debug(args ...interface{}) {
-	std.Log(2, fmt.Sprint(args...), 2)
+	std.Log(1, fmt.Sprint(args...), 2)
 }
 
 // Debugf 日志-调试
 func Debugf(format string, args ...interface{}) {
-	std.Log(2, fmt.Sprintf(format, args...), 2)
+	std.Log(1, fmt.Sprintf(format, args...), 2)
 }
 
 // DebugTimes 日志-调试, 指定日志代码位置的定位调用层级
@@ -112,6 +90,26 @@ func DebugTimes(times int, args ...interface{}) {
 // DebugfTimes 日志-调试, 指定日志代码位置的定位调用层级
 func DebugfTimes(format string, times int, args ...interface{}) {
 	std.Log(1, fmt.Sprintf(format, args...), times)
+}
+
+// Info 日志-信息
+func Info(args ...interface{}) {
+	std.Log(2, fmt.Sprint(args...), 2)
+}
+
+// Infof 日志-信息
+func Infof(format string, args ...interface{}) {
+	std.Log(2, fmt.Sprintf(format, args...), 2)
+}
+
+// InfoTimes 日志-信息, 指定日志代码位置的定位调用层级
+func InfoTimes(times int, args ...interface{}) {
+	std.Log(2, fmt.Sprint(args...), times)
+}
+
+// InfofTimes 日志-信息, 指定日志代码位置的定位调用层级
+func InfofTimes(format string, times int, args ...interface{}) {
+	std.Log(2, fmt.Sprintf(format, args...), times)
 }
 
 // Warn 日志-警告
@@ -126,12 +124,12 @@ func Warnf(format string, args ...interface{}) {
 
 // WarnTimes 日志-警告, 指定日志代码位置的定位调用层级
 func WarnTimes(times int, args ...interface{}) {
-	std.Log(1, fmt.Sprint(args...), times)
+	std.Log(3, fmt.Sprint(args...), times)
 }
 
 // WarnfTimes 日志-警告, 指定日志代码位置的定位调用层级
 func WarnfTimes(format string, times int, args ...interface{}) {
-	std.Log(1, fmt.Sprintf(format, args...), times)
+	std.Log(3, fmt.Sprintf(format, args...), times)
 }
 
 // Error 日志-错误
@@ -146,12 +144,12 @@ func Errorf(format string, args ...interface{}) {
 
 // ErrorTimes 日志-错误, 指定日志代码位置的定位调用层级
 func ErrorTimes(times int, args ...interface{}) {
-	std.Log(1, fmt.Sprint(args...), times)
+	std.Log(2, fmt.Sprint(args...), times)
 }
 
 // ErrorfTimes 日志-错误, 指定日志代码位置的定位调用层级
 func ErrorfTimes(format string, times int, args ...interface{}) {
-	std.Log(1, fmt.Sprintf(format, args...), times)
+	std.Log(2, fmt.Sprintf(format, args...), times)
 }
 
 // Bar 终端显示的进度条
