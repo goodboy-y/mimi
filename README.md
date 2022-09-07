@@ -1,10 +1,13 @@
-# Mimi
+# Mimi-秘密
 
 Mimi是一款通过代理手段扫描页面或者请求中是否包含可疑字段的应用,可以用于以下场景
 1. 接口返回值是否包含隐私字段
 2. 接口是否返回了一些违反规定的数据
 
 # 快速使用
+
+演示视频: https://www.bilibili.com/video/BV1Sd4y1g7S6
+
 在命令行中运行代理服务
 ``` shell
 mimi -p 8111 -k idCard
