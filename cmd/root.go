@@ -20,8 +20,9 @@ var rootCmd = &cobra.Command{
 		port, _ := cmd.Flags().GetString("port")
 		key, _ := cmd.Flags().GetString("key")
 		logLevel, _ := cmd.Flags().GetString("log")
+		persist, _ := cmd.Flags().GetBool("persist")
 		log.LogLevel(logLevel)
-		ipt := core.NewIntercept(port, key)
+		ipt := core.NewIntercept(port, key, persist)
 		// 启动服务
 		ipt.RunServer()
 	},
@@ -42,6 +43,7 @@ func init() {
 	rootCmd.Flags().StringP("port", "p", "8111", "端口")
 	rootCmd.Flags().StringP("key", "k", "idCard", "关键词，支持正则")
 	rootCmd.Flags().String("log", "info", "日志等级:debug,info,warn,error")
+	rootCmd.Flags().Bool("persist", false, "是否持久化")
 	rootCmd.AddCommand(versionCmd)
 }
 
