@@ -29,10 +29,10 @@ func Search(pagesize, pageNo int) []RequestInfo {
 	db, err := sql.Open("sqlite3", "./data/data.db")
 
 	//插入数据
-	stmt, err := db.Prepare("select id,search_key, url, request_type, created_time from request_info LIMIT ? OFFSET ?")
+	stmt, err := db.Prepare("select id,search_key, url, request_type, created_time from request_info order by created_time desc")
 	checkErr(err)
 
-	rows, err := stmt.Query(pagesize, pageNo*pagesize)
+	rows, err := stmt.Query()
 	checkErr(err)
 	for rows.Next() {
 		var id string
